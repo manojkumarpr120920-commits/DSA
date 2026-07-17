@@ -1,0 +1,28 @@
+name: Organize DSA Solutions
+
+on:
+  push:
+    paths:
+      - "**"
+
+jobs:
+  organize:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run organizer
+        run: |
+          python scripts/organize.py
+
+      - name: Commit changes
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+
+          git add .
+          git commit -m "Auto organize DSA solutions" || echo "No changes"
+
+          git push
