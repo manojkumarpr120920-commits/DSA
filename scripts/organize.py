@@ -1,57 +1,59 @@
 import os
 import shutil
-import json
 
-# Load LeetCode problem-topic database
-with open("scripts/leetcode_topics.json", "r") as file:
-    TOPICS = json.load(file)
+TOPICS = {
+    "two-sum": "Arrays",
+    "array": "Arrays",
+    "maximum-subarray": "Arrays",
+    "binary-search": "BinarySearch",
+    "search": "BinarySearch",
+    "linked-list": "LinkedList",
+    "reverse-linked": "LinkedList",
+    "tree": "Trees",
+    "binary-tree": "Trees",
+    "graph": "Graphs",
+    "dfs": "Graphs",
+    "bfs": "Graphs",
+    "dynamic-programming": "DP",
+    "dp": "DP",
+    "house-robber": "DP",
+    "stack": "Stack",
+    "queue": "Queue",
+    "heap": "Heap",
+    "priority-queue": "Heap",
+    "recursion": "Recursion",
+    "backtracking": "Backtracking",
+}
 
+IGNORE = {".git", ".github", "scripts", "Other"}
+IGNORE.update(TOPICS.values())
 
 def detect_topic(problem_name):
     name = problem_name.lower()
-
     for keyword, folder in TOPICS.items():
         if keyword in name:
             return folder
-
     return "Other"
-
 
 def organize():
     current = os.getcwd()
-
     for item in os.listdir(current):
-
-        # Only check folders
+        if item.startswith("."):
+            continue
         if not os.path.isdir(item):
             continue
-
-        # Don't move scripts folder
-        if item == "scripts":
-            continue
-
-        # Don't move topic folders again
-        if item in TOPICS.values():
+        if item in IGNORE:
             continue
 
         topic = detect_topic(item)
+        destination = os.path.join(topic, item)
 
-        destination_folder = topic
+        if not os.path.exists(topic):
+            os.mkdir(topic)
 
-        # Create topic folder if missing
-        if not os.path.exists(destination_folder):
-            os.mkdir(destination_folder)
-
-        destination = os.path.join(destination_folder, item)
-
-        # Move problem folder
-        if not os.path.exists(destination):
+        if item != topic:
             shutil.move(item, destination)
-            print(f"Moved {item} → {destination_folder}")
-
-        else:
-            print(f"Already exists: {destination}")
-
+            print(f"Moved {item} -> {topic}")
 
 if __name__ == "__main__":
     organize()
