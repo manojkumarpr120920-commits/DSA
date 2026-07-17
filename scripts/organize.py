@@ -32,11 +32,9 @@ def organize():
 
     for item in os.listdir(current):
 
-        # ignore folders
         if not os.path.isdir(item):
             continue
 
-        # ignore scripts folder
         if item == "scripts":
             continue
 
