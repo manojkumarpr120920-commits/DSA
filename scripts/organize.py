@@ -1,20 +1,10 @@
 import os
 import shutil
+import json
 
-# Main folders
-TOPICS = {
-    "array": "Arrays",
-    "two-sum": "Arrays",
-    "sort": "Sorting",
-    "linked-list": "LinkedList",
-    "tree": "Trees",
-    "binary-tree": "Trees",
-    "graph": "Graphs",
-    "dynamic-programming": "DP",
-    "dp": "DP",
-    "stack": "Stack",
-    "queue": "Queue",
-}
+# Load LeetCode problem-topic database
+with open("scripts/leetcode_topics.json", "r") as file:
+    TOPICS = json.load(file)
 
 
 def detect_topic(problem_name):
@@ -32,23 +22,35 @@ def organize():
 
     for item in os.listdir(current):
 
+        # Only check folders
         if not os.path.isdir(item):
             continue
 
+        # Don't move scripts folder
         if item == "scripts":
+            continue
+
+        # Don't move topic folders again
+        if item in TOPICS.values():
             continue
 
         topic = detect_topic(item)
 
-        destination = os.path.join(topic, item)
+        destination_folder = topic
 
-        if not os.path.exists(topic):
-            os.mkdir(topic)
+        # Create topic folder if missing
+        if not os.path.exists(destination_folder):
+            os.mkdir(destination_folder)
 
-        if item != topic:
+        destination = os.path.join(destination_folder, item)
+
+        # Move problem folder
+        if not os.path.exists(destination):
             shutil.move(item, destination)
+            print(f"Moved {item} → {destination_folder}")
 
-            print(f"Moved {item} → {topic}")
+        else:
+            print(f"Already exists: {destination}")
 
 
 if __name__ == "__main__":
